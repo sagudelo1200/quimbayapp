@@ -1,0 +1,303 @@
+import React from 'react'
+import {
+  FormGroup,
+  Input,
+  Label,
+  FormFeedback,
+  Button,
+  Modal,
+  Form,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Col,
+  Row,
+} from 'reactstrap'
+
+import { collection, addDoc, doc, updateDoc } from 'firebase/firestore'
+
+import { useNotify } from 'contexts/notifyContext'
+import { db } from 'firebaseApp'
+
+const NewActivityModal = ({ isOpen, toggle, edit, updateItem, addItem }) => {
+  const { notify, successAlert } = useNotify()
+  const defaultForm = {
+    estado: 'programado',
+    id: '',
+    nombre: '',
+    fecha: '',
+    descripcion: '',
+    imagen: '',
+    lugar: '',
+    hora: '',
+    precio: '',
+  }
+  const [form, setForm] = React.useState(defaultForm)
+
+  const [errors, setErrors] = React.useState({})
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+  const handleChange = (e) => {
+    const newForm = { ...form, [e.target.name]: e.target.value }
+    setForm(newForm)
+    validate(newForm)
+  }
+
+  const createActivity = async () => {
+    setIsSubmitting(true)
+    const res = await addDoc(collection(db, 'actividades'), form)
+    addItem({ ...form, id: res.id })
+    setIsSubmitting(false)
+  }
+
+  const editActivity = async () => {
+    setIsSubmitting(true)
+    await updateDoc(doc(db, 'actividades', form.id), form)
+    updateItem(form)
+    setIsSubmitting(false)
+  }
+
+  // function that verifies if value is a valid url
+  const verifyUrl = (value) => {
+    // eslint-disable-next-line
+    var urlRex = /^(ftp|http|https|chrome|:\/\/|\.|@){2,}(localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|\S*:\w*@)*([a-zA-Z]|(\d{1,3}|\.){7}){1,}(\w|\.{2,}|\.[a-zA-Z]{2,3}|\/|\?|&|:\d|@|=|\/|\(.*\)|#|-|%)*$/gum
+    if (urlRex.test(value)) {
+      return true
+    }
+    return false
+  }
+
+  const trimData = (data) => {
+    const newData = { ...data }
+    Object.keys(newData).forEach((key) => {
+      if (typeof newData[key] === 'string') {
+        newData[key] = newData[key].trim()
+      }
+    })
+    return newData
+  }
+
+  const validate = (altForm = null) => {
+    const formData = altForm || form
+    const values = trimData(formData)
+    const newErrors = {}
+
+    if (
+      values.nombre === '' && values.fecha === '' &&
+      values.descripcion === '' && values.imagen === '' &&
+      values.lugar === '' && values.hora === '' &&
+      values.precio === ''
+    ) {
+      newErrors.empty = 'Todos los campos estan vacios'
+    }
+
+    if (values.imagen !== '' && !verifyUrl(values.imagen)) newErrors.imagen = 'Debe ser una URL válida'
+    setErrors(newErrors)
+    return newErrors
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    const errors = validate(form)
+    setErrors(errors)
+    if (Object.keys(errors).length === 0) {
+      if (!edit) {
+        try {
+          await createActivity()
+          successAlert({
+            message: 'Actividad creada con éxito',
+            title: 'Nueva actividad',
+          })
+          toggle()
+        } catch (err) {
+          console.error(err)
+        }
+      } else if (form !== edit) {
+        try {
+          await editActivity()
+          successAlert({
+            message: 'Se han guardado los cambios',
+          })
+          toggle()
+        } catch (err) {
+          console.error(err)
+        }
+      } else {
+        notify({
+          message: 'No se han detectado cambios',
+          type: 'info',
+          icon: 'fas fa-info-circle',
+          autoDismiss: 3,
+        })
+        toggle()
+      }
+    } else {
+      if (errors.empty) {
+        notify({
+          place: 'bc',
+          message: errors.empty,
+          type: 'danger',
+          icon: 'fas fa-times',
+          autoDismiss: 3,
+        })
+      } else {
+        notify({
+          place: 'bc',
+          message: 'Por favor, revise los campos resaltados.',
+          type: 'warning',
+          icon: 'fas fa-exclamation-triangle',
+          autoDismiss: 4,
+        })
+      }
+    }
+    setIsSubmitting(false)
+  }
+
+  React.useEffect(() => {
+    setForm(edit || defaultForm)
+    // eslint-disable-next-line
+  }, [edit])
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      toggle={toggle}
+      size='lg'
+      onClosed={() => setForm(defaultForm)}
+    >
+      <ModalHeader tag='h4' toggle={toggle}>
+        {edit ? `Editar actividad - ${edit.id}` : 'Nueva actividad'}
+      </ModalHeader>
+      <ModalBody>
+        <Form>
+          <Row className='d-flex justify-content-center'>
+            <Col sm='6' lg='4'>
+              <FormGroup>
+                <Label for='nombre'>Nombre</Label>
+                <Input
+                  className='text-dark'
+                  type='text'
+                  name='nombre'
+                  id='nombre'
+                  placeholder='Nombre de la actividad'
+                  value={form.nombre}
+                  onChange={handleChange}
+                  invalid={errors.nombre ? true : false}
+                />
+                <FormFeedback>{errors.nombre}</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col sm='6' lg='4'>
+              <FormGroup>
+                <Label for='fecha'>Fecha</Label>
+                <Input
+                  className='text-dark'
+                  type='date'
+                  name='fecha'
+                  id='fecha'
+                  placeholder='Fecha de la actividad'
+                  value={form.fecha}
+                  onChange={handleChange}
+                  invalid={errors.fecha ? true : false}
+                />
+                <FormFeedback>{errors.fecha}</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col sm='6' lg='4'>
+              <FormGroup>
+                <Label for='hora'>Hora</Label>
+                <Input
+                  className='text-dark'
+                  type='time'
+                  name='hora'
+                  id='hora'
+                  placeholder='Hora de la actividad'
+                  value={form.hora}
+                  onChange={handleChange}
+                  invalid={errors.hora ? true : false}
+                />
+                <FormFeedback>{errors.hora}</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col sm='6' lg='4'>
+              <FormGroup>
+                <Label for='lugar'>Lugar</Label>
+                <Input
+                  className='text-dark'
+                  type='text'
+                  name='lugar'
+                  id='lugar'
+                  placeholder='Lugar de la actividad'
+                  value={form.lugar}
+                  onChange={handleChange}
+                  invalid={errors.lugar ? true : false}
+                />
+                <FormFeedback>{errors.lugar}</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col sm='6' lg='4'>
+              <FormGroup>
+                <Label for='precio'>Precio</Label>
+                <Input
+                  className='text-dark'
+                  type='number'
+                  name='precio'
+                  id='precio'
+                  placeholder='Precio de la actividad'
+                  value={form.precio}
+                  onChange={handleChange}
+                  invalid={errors.precio ? true : false}
+                />
+                <FormFeedback>{errors.precio}</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col xs='12' lg='4'>
+              <FormGroup>
+                <Label for='imagen'>Imagen</Label>
+                <Input
+                  className='text-dark'
+                  type='url'
+                  name='imagen'
+                  id='imagen'
+                  placeholder='URL de la imagen publicitaria'
+                  value={form.imagen}
+                  onChange={handleChange}
+                  invalid={errors.imagen ? true : false}
+                />
+                <FormFeedback>{errors.imagen}</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col xs='12' lg='8'>
+              <FormGroup>
+                <Label for='descripcion'>Descripción</Label>
+                <Input
+                  className='text-dark'
+                  type='textarea'
+                  name='descripcion'
+                  id='descripcion'
+                  placeholder='Descripción de la actividad'
+                  value={form.descripcion}
+                  onChange={handleChange}
+                  invalid={errors.descripcion ? true : false}
+                />
+                <FormFeedback>{errors.descripcion}</FormFeedback>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form>
+      </ModalBody>
+      <ModalFooter>
+        <Button color='primary' onClick={handleSubmit} disabled={isSubmitting}>
+          {edit ? 'Guardar cambios' : 'Crear actividad'}
+        </Button>
+        <Button color='secondary' onClick={toggle}>
+          Cancelar
+        </Button>
+      </ModalFooter>
+    </Modal>
+  )
+}
+
+
+export default NewActivityModal
