@@ -164,7 +164,7 @@ const NewActivityModal = ({ isOpen, toggle, edit, updateItem, addItem }) => {
       isOpen={isOpen}
       toggle={toggle}
       size='lg'
-      onClosed={() => setForm(defaultForm)}
+      onClosed={() => setForm(edit || defaultForm)}
     >
       <ModalHeader tag='h4' toggle={toggle}>
         {edit ? `Editar actividad - ${edit.id}` : 'Nueva actividad'}
