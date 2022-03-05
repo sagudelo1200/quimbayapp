@@ -13,6 +13,7 @@ import {
   Col,
   Row,
 } from 'reactstrap'
+import { toast } from 'react-toastify'
 
 import { collection, addDoc, doc, updateDoc } from 'firebase/firestore'
 
@@ -20,7 +21,7 @@ import { useNotify } from 'contexts/notifyContext'
 import { db } from 'firebaseApp'
 
 const NewActivityModal = ({ isOpen, toggle, edit, updateItem, addItem }) => {
-  const { notify, successAlert } = useNotify()
+  const { successAlert } = useNotify()
   const defaultForm = {
     estado: 'programado',
     id: '',
@@ -31,6 +32,7 @@ const NewActivityModal = ({ isOpen, toggle, edit, updateItem, addItem }) => {
     lugar: '',
     hora: '',
     precio: '',
+    unidades: [],
   }
   const [form, setForm] = React.useState(defaultForm)
 
@@ -124,34 +126,50 @@ const NewActivityModal = ({ isOpen, toggle, edit, updateItem, addItem }) => {
           console.error(err)
         }
       } else {
-        notify({
-          message: 'No se han detectado cambios',
-          type: 'info',
-          icon: 'fas fa-info-circle',
-          autoDismiss: 3,
-        })
+        toast.info('No se han detectado cambios')
         toggle()
       }
     } else {
       if (errors.empty) {
-        notify({
-          place: 'bc',
-          message: errors.empty,
-          type: 'danger',
-          icon: 'fas fa-times',
-          autoDismiss: 3,
-        })
+        toast.error(errors.empty)
       } else {
-        notify({
-          place: 'bc',
-          message: 'Por favor, revise los campos resaltados.',
-          type: 'warning',
-          icon: 'fas fa-exclamation-triangle',
-          autoDismiss: 4,
-        })
+        toast.warning('Hay errores en el formulario')
       }
     }
     setIsSubmitting(false)
+  }
+
+  const handleCheck = ({ target }) => {
+    const { name, checked } = target
+    let newForm = { ...form }
+    /* check all options */
+    if (name === 'todos') {
+      if (checked) {
+        newForm.unidades = [
+          'todos',
+          'familia',
+          'manada',
+          'tropa',
+          'sociedad',
+          'clan'
+        ]
+      } else {
+        newForm.unidades = []
+      }
+    } else {
+      if (checked) {
+        newForm.unidades.push(name)
+      } else {
+        newForm.unidades = newForm.unidades.filter(item => item !== name)
+      }
+      /* check if all unidades are in the form list */
+      if (newForm.unidades.length === 5 && !newForm.unidades.includes('todos')) {
+        newForm.unidades.push('todos')
+      } else {
+        newForm.unidades = newForm.unidades.filter(item => item !== 'todos')
+      }
+    }
+    setForm(newForm)
   }
 
   React.useEffect(() => {
@@ -172,6 +190,93 @@ const NewActivityModal = ({ isOpen, toggle, edit, updateItem, addItem }) => {
       <ModalBody>
         <Form>
           <Row className='d-flex justify-content-center'>
+            {edit
+              ?
+              null
+              :
+              <Col xs='12'>
+                <Row className='d-flex justify-content-center'>
+                  <Col xs='12' className='col-form-label text-center pb-0'>
+                    <p>UNIDADES QUE ASISTEN</p>
+                    <small className='text-danger'>No se podrán cambiar después de guardar</small>
+                  </Col>
+                  <Col xs='12' className='col-form-label text-center pt-0'>
+                    <FormGroup check inline>
+                      <Label check className='text-dark'>
+                        <Input
+                          type='checkbox'
+                          name='todos'
+                          checked={form.unidades.includes('todos')}
+                          onChange={handleCheck}
+                        />
+                        <span className='form-check-sign' />
+                        Todos
+                      </Label>
+                    </FormGroup>
+                    <FormGroup check inline>
+                      <Label check>
+                        <Input
+                          type='checkbox'
+                          name='familia'
+                          checked={form.unidades.includes('familia')}
+                          onChange={handleCheck}
+                        />
+                        <span className='form-check-sign' />
+                        Familia
+                      </Label>
+                    </FormGroup>
+                    <FormGroup check inline>
+                      <Label check>
+                        <Input
+                          type='checkbox'
+                          name='manada'
+                          checked={form.unidades.includes('manada')}
+                          onChange={handleCheck}
+                        />
+                        <span className='form-check-sign' />
+                        Manada
+                      </Label>
+                    </FormGroup>
+                    <FormGroup check inline>
+                      <Label check>
+                        <Input
+                          type='checkbox'
+                          name='tropa'
+                          checked={form.unidades.includes('tropa')}
+                          onChange={handleCheck}
+                        />
+                        <span className='form-check-sign' />
+                        Tropa
+                      </Label>
+                    </FormGroup>
+                    <FormGroup check inline>
+                      <Label check>
+                        <Input
+                          type='checkbox'
+                          name='sociedad'
+                          checked={form.unidades.includes('sociedad')}
+                          onChange={handleCheck}
+                        />
+                        <span className='form-check-sign' />
+                        Sociedad
+                      </Label>
+                    </FormGroup>
+                    <FormGroup check inline>
+                      <Label check>
+                        <Input
+                          type='checkbox'
+                          name='clan'
+                          checked={form.unidades.includes('clan')}
+                          onChange={handleCheck}
+                        />
+                        <span className='form-check-sign' />
+                        Clan
+                      </Label>
+                    </FormGroup>
+                  </Col>
+                </Row>
+              </Col>
+            }
             <Col sm='6' lg='4'>
               <FormGroup>
                 <Label for='nombre'>Nombre</Label>

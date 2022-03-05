@@ -63,7 +63,6 @@ export default function AuthContextProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
-      console.log('Auth state changed', user)
       if (user && !localStorage.getItem('registering')) {
         loginToast(user)
       } else {
