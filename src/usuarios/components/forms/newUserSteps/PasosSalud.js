@@ -56,6 +56,11 @@ const PasosSalud = React.forwardRef((props, ref) => {
     state: form
   }))
 
+  React.useEffect(() => {
+    /* scroll to top */
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <>
       <h4 className='info-text'>

@@ -19,6 +19,7 @@ import React from "react";
 import classNames from "classnames";
 // react plugin used to create charts
 import { Line } from "react-chartjs-2";
+import { useAuth } from 'contexts/authContext';
 
 // reactstrap components
 import {
@@ -36,11 +37,13 @@ import {
 import { chartExample1 } from "variables/charts.js";
 
 const Dashboard = () => {
+  const { getUserData } = useAuth();
   document.title = '03 Quimbayas'
   const [bigChartData, setbigChartData] = React.useState("data1");
   const setBgChartData = (name) => {
     setbigChartData(name);
   };
+  console.log(getUserData())
   return (
     <>
       <div className="content">

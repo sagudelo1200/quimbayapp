@@ -10,6 +10,7 @@ import {
 } from 'reactstrap'
 import Select from 'react-select'
 import classnames from 'classnames'
+import { toast } from 'react-toastify'
 
 const PasosScout = React.forwardRef((props, ref) => {
   const [form, setForm] = React.useState({
@@ -81,6 +82,7 @@ const PasosScout = React.forwardRef((props, ref) => {
     }
     if (estadoUnidad === 'has-success') return true
     else setEstadoUnidad('has-danger')
+    toast.warning('Revise los campos resaltados')
     return false
   }
 
@@ -88,6 +90,10 @@ const PasosScout = React.forwardRef((props, ref) => {
     isValidated: () => isValidated(),
     state: form
   }))
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <>

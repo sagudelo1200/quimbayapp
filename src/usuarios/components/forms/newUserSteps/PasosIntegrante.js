@@ -10,6 +10,7 @@ import {
 } from 'reactstrap'
 
 import classnames from 'classnames'
+import { toast } from 'react-toastify'
 
 const PasosIntegrante = React.forwardRef((props, ref) => {
   const [form, setForm] = React.useState({
@@ -266,7 +267,7 @@ const PasosIntegrante = React.forwardRef((props, ref) => {
       if (estadoFoto !== 'has-success' && form.foto !== '') {
         setEstadoFoto('has-danger')
       }
-
+      toast.warning('Revise los campos resaltados')
       return false
     }
   }

@@ -64,8 +64,8 @@ const Login = () => {
       const res = await login(email, password)
 
       if (res) {
-        handleRedirectOrBack()
         rememberLogin(res.user)
+        handleRedirectOrBack()
       }
     } catch (error) {
       const { code } = error

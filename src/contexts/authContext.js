@@ -24,12 +24,14 @@ const AuthContext = createContext({
   forgotPassword: null,
   resetPassword: null,
   isAuthenticated: null,
+  getUserData: null,
 })
 
 export const useAuth = () => useContext(AuthContext)
 
 export default function AuthContextProvider({ children }) {
   const [currentUser, setCurrentUser] = useState({})
+  const [userData, setUserData] = useState({})
 
   const checkRole = async (user) => {
     const userRef = doc(db, `users/${user.uid}`)
@@ -41,9 +43,40 @@ export default function AuthContextProvider({ children }) {
       throw new Error(`User ${user.uid} not found`)
     }
 
-    if (userDoc.data().role === 'admin') {
+    const data = userDoc.data()
+    if (data.role === 'superadmin') {
+      toast.success('ADMINISTRADOR', {
+        theme: "colored",
+        icon: false,
+        hideProgressBar: true,
+        autoClose: 4420,
+      })
+      setCurrentUser(user)
+      setUserData(data)
+      console.log('ADMINISTRADOR')
+    } else if (data.role === 'admin') {
       console.log(`User ${user.uid} is admin`)
       setCurrentUser(user)
+      try {
+        if (!data.ref) {
+          console.log('User is not registered')
+          logout()
+          throw new Error('User is not registered')
+        }
+        const userInf = await getDoc(data.ref)
+        if (userInf.exists()) {
+          setUserData(userInf.data())
+        } else {
+          console.error(`User data ${user.uid} not found`)
+          logout()
+          throw new Error(`User data ${user.uid} not found`)
+        }
+      } catch (error) {
+        console.error(error)
+        logout()
+        toast.error('Error al obtener los datos del usuario')
+        throw new Error(error)
+      }
     } else {
       console.error(`User ${user.uid} is not admin`)
       logout()
@@ -57,7 +90,7 @@ export default function AuthContextProvider({ children }) {
       {
         pending: 'Iniciando sesión...',
         success: 'Acceso autorizado',
-        error: 'Acceso restringido',
+        error: 'Acceso denegado',
       })
   }
 
@@ -116,6 +149,10 @@ export default function AuthContextProvider({ children }) {
     return !!currentUser.uid
   }
 
+  function getUserData() {
+    return userData
+  }
+
   const value = {
     currentUser,
     signInWithGoogle,
@@ -127,6 +164,7 @@ export default function AuthContextProvider({ children }) {
     forgotPassword,
     resetPassword,
     isAuthenticated,
+    getUserData,
   }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
