@@ -1,28 +1,28 @@
 {
   "files": {
-    "main.css": "/static/css/main.82da76d8.chunk.css",
-    "main.js": "/static/js/main.c7055fbb.chunk.js",
-    "main.js.map": "/static/js/main.c7055fbb.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.decbc735.js",
-    "runtime-main.js.map": "/static/js/runtime-main.decbc735.js.map",
-    "static/css/2.68fdb14c.chunk.css": "/static/css/2.68fdb14c.chunk.css",
-    "static/js/2.6c8f9e98.chunk.js": "/static/js/2.6c8f9e98.chunk.js",
-    "static/js/2.6c8f9e98.chunk.js.map": "/static/js/2.6c8f9e98.chunk.js.map",
-    "index.html": "/index.html",
-    "static/css/2.68fdb14c.chunk.css.map": "/static/css/2.68fdb14c.chunk.css.map",
-    "static/css/main.82da76d8.chunk.css.map": "/static/css/main.82da76d8.chunk.css.map",
-    "static/js/2.6c8f9e98.chunk.js.LICENSE.txt": "/static/js/2.6c8f9e98.chunk.js.LICENSE.txt",
-    "static/js/main.c7055fbb.chunk.js.LICENSE.txt": "/static/js/main.c7055fbb.chunk.js.LICENSE.txt",
-    "static/media/card-success.png": "/static/media/card-success.b6634da7.png",
-    "static/media/black-dashboard-pro-react.scss?v=1.2.0": "/static/media/night-sky.e6a30d27.png",
-    "static/media/female_avatar.svg": "/static/media/female_avatar.cb71b8c2.svg",
-    "static/media/nucleo-icons.css": "/static/media/nucleo.bd5cce8b.eot"
+    "main.css": "/quimbayapp/static/css/main.4a9a2f83.chunk.css",
+    "main.js": "/quimbayapp/static/js/main.6d59eea3.chunk.js",
+    "main.js.map": "/quimbayapp/static/js/main.6d59eea3.chunk.js.map",
+    "runtime-main.js": "/quimbayapp/static/js/runtime-main.a3c803e0.js",
+    "runtime-main.js.map": "/quimbayapp/static/js/runtime-main.a3c803e0.js.map",
+    "static/css/2.68fdb14c.chunk.css": "/quimbayapp/static/css/2.68fdb14c.chunk.css",
+    "static/js/2.9cc97468.chunk.js": "/quimbayapp/static/js/2.9cc97468.chunk.js",
+    "static/js/2.9cc97468.chunk.js.map": "/quimbayapp/static/js/2.9cc97468.chunk.js.map",
+    "index.html": "/quimbayapp/index.html",
+    "static/css/2.68fdb14c.chunk.css.map": "/quimbayapp/static/css/2.68fdb14c.chunk.css.map",
+    "static/css/main.4a9a2f83.chunk.css.map": "/quimbayapp/static/css/main.4a9a2f83.chunk.css.map",
+    "static/js/2.9cc97468.chunk.js.LICENSE.txt": "/quimbayapp/static/js/2.9cc97468.chunk.js.LICENSE.txt",
+    "static/js/main.6d59eea3.chunk.js.LICENSE.txt": "/quimbayapp/static/js/main.6d59eea3.chunk.js.LICENSE.txt",
+    "static/media/card-success.png": "/quimbayapp/static/media/card-success.b6634da7.png",
+    "static/media/black-dashboard-pro-react.scss?v=1.2.0": "/quimbayapp/static/media/night-sky.e6a30d27.png",
+    "static/media/female_avatar.svg": "/quimbayapp/static/media/female_avatar.cb71b8c2.svg",
+    "static/media/nucleo-icons.css": "/quimbayapp/static/media/nucleo.bd5cce8b.eot"
   },
   "entrypoints": [
-    "static/js/runtime-main.decbc735.js",
+    "static/js/runtime-main.a3c803e0.js",
     "static/css/2.68fdb14c.chunk.css",
-    "static/js/2.6c8f9e98.chunk.js",
-    "static/css/main.82da76d8.chunk.css",
-    "static/js/main.c7055fbb.chunk.js"
+    "static/js/2.9cc97468.chunk.js",
+    "static/css/main.4a9a2f83.chunk.css",
+    "static/js/main.6d59eea3.chunk.js"
   ]
 }
